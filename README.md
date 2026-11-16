@@ -1,24 +1,16 @@
-Copia y pega este código tal cual en tu archivo README.md:
+Ejercicio para clasificar productos.
 
-Markdown
-# Clasificador de Productos API
+Clasifica usando palabras clave guardadas en /data/keywords.json
 
-Ejercicio en Node.js y Express para clasificar productos utilizando un diccionario de palabras clave almacenado en `/data/keywords.json`.
-
-## Instalación e inicio
-
-Ejecuta los siguientes comandos en la terminal para inicializar el proyecto e instalar las dependencias:
+iniciar con npm install -y && npm install express
 
 ```bash
 npm init -y
 npm install express
 Peticiones de prueba
-1. Clasificar productos
-Método: POST
+POST
 
-Endpoint: http://localhost:3000/productos/clasificar
-
-Body (JSON):
+http://localhost:3000/productos/clasificar
 
 JSON
 {
@@ -29,12 +21,8 @@ JSON
     { "nombre": "Salmón fresco", "categoria": "Pescadería" }
   ]
 }
-2. Calcular reparto en checkout
-Método: POST
 
-Endpoint: http://localhost:3000/checkout/reparto
-
-Body (JSON):
+http://localhost:3000/checkout/reparto
 
 JSON
 {
@@ -45,12 +33,8 @@ JSON
     { "nombre": "Café molido", "precio": 3.20, "cantidad": 1 }
   ]
 }
-3. Corregir tipo de producto
-Método: PUT
-
-Endpoint: http://localhost:3000/productos/corregir
-
-Body (JSON):
+PUT
+http://localhost:3000/productos/corregir
 
 JSON
 {
