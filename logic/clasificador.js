@@ -14,22 +14,35 @@ function limpiarTexto(texto) {
 function clasificarProducto(producto) {
   const guardados = JSON.parse(fs.readFileSync(rutaProducts, 'utf-8'));
   const existente = guardados.find(p => limpiarTexto(p.nombre) === limpiarTexto(producto.nombre));
-  if (existente) return existente;
+  if (existente) {
+    return {
+      ...producto,
+      tipo: existente.tipo,
+      confianza: existente.confianza,
+      motivo: existente.motivo || 'Corrección manual',
+      plan_semanal: existente.plan_semanal || ClasificarPlan(producto)
+    };
+  }
 
   const textoCompleto = limpiarTexto(`${producto.nombre} ${producto.unidad || ''} ${producto.categoria || ''} ${producto.variedad || ''}`);
-  const tiposDetectados = [];
-  const palabrasEncontradas = [];
+  const matches = [];
 
   for (const [tipo, listaPalabras] of Object.entries(keywords.tipos)) {
     for (const palabra of listaPalabras) {
-      if (textoCompleto.includes(limpiarTexto(palabra))) {
-        if (!tiposDetectados.includes(tipo)) {
-          tiposDetectados.push(tipo);
-        }
-        palabrasEncontradas.push(palabra);
+      const palabraLimpia = limpiarTexto(palabra);
+      const regex = new RegExp(`\\b${palabraLimpia}(s|es)?\\b`, 'i');
+      if (regex.test(textoCompleto)) {
+        matches.push({ tipo, palabra, palabraLimpia });
       }
     }
   }
+
+  // Descartamos palabras contenidas en una frase más específica (ej: "fruta" dentro de "fruta cortada")
+  const matchesFiltrados = matches.filter(m =>
+    !matches.some(otra => otra.palabra !== m.palabra && otra.palabraLimpia.includes(m.palabraLimpia))
+  );
+
+  const tiposDetectados = [...new Set(matchesFiltrados.map(m => m.tipo))];
 
   if (tiposDetectados.length === 1) {
     return {
@@ -82,13 +95,13 @@ function guardarCorreccion(nombre, nuevoTipo) {
   if (producto) {
     producto.tipo = nuevoTipo;
     producto.confianza = 1.0;
-    producto.motivo = 'Editado';
+    producto.motivo = 'Corrección manual';
   } else {
     producto = {
       nombre,
       tipo: nuevoTipo,
       confianza: 1.0,
-      motivo: 'Editado',
+      motivo: 'Corrección manual',
       plan_semanal: ClasificarPlan({ nombre })
     };
     guardados.push(producto);
@@ -110,7 +123,10 @@ function ClasificarPlan(producto) {
   const planes = [];
 
   for (const [tipo, palabras] of Object.entries(keywords.plan_semanal)) {
-    if (palabras.some(p => texto.includes(limpiarTexto(p)))) {
+    if (palabras.some(p => {
+      const regex = new RegExp(`\\b${limpiarTexto(p)}(s|es)?\\b`, 'i');
+      return regex.test(texto);
+    })) {
       planes.push(tipo);
     }
   }

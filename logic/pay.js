@@ -7,10 +7,12 @@ function calcularRepartoPago(carrito) {
   let totalTarjeta = 0;
   const detalle = [];
 
-  for (const item of carrito) {
+  for (const item of (carrito || [])) {
     const info = clasificarProducto(item);
-    const subtotal = item.precio * item.cantidad;
-    const esApto = TIPOS_TICKET.includes(info.tipo); //Només tipus preparado
+    const precio = Number(item.precio) || 0;
+    const cantidad = Number(item.cantidad) || 1;
+    const subtotal = precio * cantidad;
+    const esApto = TIPOS_TICKET.includes(info.tipo); // Només tipus preparado
 
     if (esApto) {
       totalTicket += subtotal;
@@ -21,7 +23,7 @@ function calcularRepartoPago(carrito) {
     detalle.push({
       nombre: item.nombre,
       tipo: info.tipo,
-      cantidad: item.cantidad,
+      cantidad: cantidad,
       subtotal: Number(subtotal.toFixed(2)),
       pagable_con_ticket: esApto
     });
