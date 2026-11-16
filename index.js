@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs');
 const { clasificarProducto, guardarCorreccion } = require('./logic/clasificador');
 const { calcularRepartoPago } = require('./logic/pago');
 
@@ -11,6 +12,15 @@ app.post('/productos/clasificar', (req, res) => {
   const productos = req.body.productos;
 
   const resultados = productos.map(prod => clasificarProducto(prod));
+
+  const guardados = JSON.parse(fs.readFileSync('./data/products.json', 'utf-8'));
+  resultados.forEach(item => {
+    if (!guardados.some(p => p.nombre.toLowerCase() === item.nombre.toLowerCase())) {
+      guardados.push(item);
+    }
+  });
+  fs.writeFileSync('./data/products.json', JSON.stringify(guardados, null, 2));
+
   res.json({ resultados });
 });
 

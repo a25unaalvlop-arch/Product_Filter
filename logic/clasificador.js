@@ -1,16 +1,21 @@
 const fs = require('fs');
 const path = require('path');
-
 const keywords = require('../data/keywords.json');
+const rutaProducts = path.join(__dirname, '../data/products.json');
+
 
 function clasificarProducto(producto) {
+  const guardados = JSON.parse(fs.readFileSync(rutaProducts, 'utf-8'));
+  const existente = guardados.find(p => p.nombre.toLowerCase() === producto.nombre.toLowerCase());
+  if (existente) return existente;
+
+
 
   const textoCompleto = `${producto.nombre} ${producto.unidad || ''} ${producto.categoria || ''} ${producto.variedad || ''}`.toLowerCase();
   const tiposDetectados = [];
   const palabrasEncontradas = [];
 
 
-  
   for (const [tipo, listaPalabras] of Object.entries(keywords.tipos)) {
     for (const palabra of listaPalabras) {
       if (textoCompleto.includes(palabra)) {
@@ -22,6 +27,8 @@ function clasificarProducto(producto) {
     }
   }
 
+
+
   if (tiposDetectados.length === 1) {
     return {
       ...producto,
@@ -30,24 +37,39 @@ function clasificarProducto(producto) {
       motivo: "Coincide con alguna palabra clave de 1 solo tipo",
       plan_semanal: ClasificarPlan(producto)
     };
-  }else if (tiposDetectados.length > 1) {
+  } else if (tiposDetectados.length > 1) {
     return {
-        ...producto,
-        tipo: 'pendiente de revisión',
-        confianza: 0.5,
-        motivo: "Contiene palabras clave de más de 1 tipo",
-        plan_semanal: ClasificarPlan(producto)
+      ...producto,
+      tipo: 'pendiente de revisión',
+      confianza: 0.5,
+      motivo: "Contiene palabras clave de más de 1 tipo",
+      plan_semanal: ClasificarPlan(producto)
     };
-  }else {
+  } else {
     return {
-        ...producto,
-        tipo: 'pendiente de revisión',
-        confianza: 0.0,
-        motivo: 'Ninguna palabra coincide',
-        plan_semanal: ClasificarPlan(producto)
-      };
-    }
+      ...producto,
+      tipo: 'pendiente de revisión',
+      confianza: 0.0,
+      motivo: 'Ninguna palabra coincide',
+      plan_semanal: ClasificarPlan(producto)
+    };
   }
+}
+
+
+function guardarCorreccion(nombre, nuevoTipo) {
+  const guardados = JSON.parse(fs.readFileSync(rutaProducts, 'utf-8'));
+  const producto = guardados.find(p => p.nombre.toLowerCase() === nombre.toLowerCase());
+
+  if (!producto) return null;
+
+  producto.tipo = nuevoTipo;
+  producto.confianza = 1.0;
+  producto.motivo = 'Editado manualmente';
+
+  fs.writeFileSync(rutaProducts, JSON.stringify(guardados, null, 2));
+  return producto;
+}
 
 
 
