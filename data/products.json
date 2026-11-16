@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "nombre": "Arroz con pollo",
+    "tipo": "Preparado",
+    "confianza": 1,
+    "motivo": "Corrección manual",
+    "plan_semanal": [
+      "ahorro"
+    ]
+  }
+]

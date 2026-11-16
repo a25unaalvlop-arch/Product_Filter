@@ -8,26 +8,23 @@ const port = 3000;
 app.use(express.json());
 
 app.post('/productos/clasificar', (req, res) => {
-  const productos = req.body.productos || (Array.isArray(req.body) ? req.body : []);
+  const productos = req.body.productos;
   const resultados = productos.map(prod => clasificarProducto(prod));
   res.json({ resultados });
 });
 
-const handlerCorregir = (req, res) => {
+app.put('/productos/corregir', (req, res) => {
   const { nombre, tipo } = req.body;
   if (!nombre || !tipo) {
-    return res.status(400).json({ error: 'Faltan campos obligatorios (nombre y tipo)' });
+    return res.status(400).json({ error: 'Faltan campos obligatorios' });
   }
 
   const actualizado = guardarCorreccion(nombre, tipo);
   res.json({ mensaje: 'Producto actualizado', producto: actualizado });
-};
-
-app.put('/productos/corregir', handlerCorregir);
-app.post('/productos/corregir', handlerCorregir);
+});
 
 app.post('/checkout/reparto', (req, res) => {
-  const carrito = req.body.carrito || (Array.isArray(req.body) ? req.body : []);
+  const carrito = req.body.carrito;
   const reparto = calcularRepartoPago(carrito);
   res.json(reparto);
 });
