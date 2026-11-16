@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
-const { clasificarProducto, guardarCorreccion } = require('./logic/clasificador');
-const { calcularRepartoPago } = require('./logic/pago');
+const { clasificarProducto, guardarCorreccion, limpiarTexto } = require('./logic/clasificador');
+const { calcularRepartoPago } = require('./logic/pay');
 
 const app = express();
 const port = 3000;
@@ -15,7 +15,7 @@ app.post('/productos/clasificar', (req, res) => {
 
   const guardados = JSON.parse(fs.readFileSync('./data/products.json', 'utf-8'));
   resultados.forEach(item => {
-    if (!guardados.some(p => p.nombre.toLowerCase() === item.nombre.toLowerCase())) {
+    if (!guardados.some(p => limpiarTexto(p.nombre) === limpiarTexto(item.nombre))) {
       guardados.push(item);
     }
   });
@@ -33,6 +33,12 @@ app.put('/productos/corregir', (req, res) => {
   }
 
   res.json({ mensaje: 'Producto actualizado', producto: actualizado });
+});
+
+app.post('/checkout/reparto', (req, res) => {
+  const carrito = req.body.carrito;
+  const reparto = calcularRepartoPago(carrito);
+  res.json(reparto);
 });
 
 app.listen(port, () => {

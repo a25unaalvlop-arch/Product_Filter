@@ -1,13 +1,15 @@
 {
   "tipos": {
-    "Preparado": ["tortilla", "lasaña", "ensalada lista", "gazpacho", "asado", "cocinado"],
-    "Ingrediente": ["tomate", "pechuga", "pollo", "queso", "huevos", "carne", "fresco", "lomo"],
-    "Suplemento": ["proteína", "colágeno", "vitamina", "cápsula", "herbolario", "jalea"],
-    "Alacena": ["arroz", "aceite", "legumbres", "café", "bote", "tarro", "brick", "conserva", "lata"]
+    "Preparado": ["tortilla", "lasaña", "ensalada lista", "ensaladilla", "gazpacho", "salmorejo", "asado", "cocinado", "listo para comer", "plato del día", "menú", "croquetas", "empanada", "canelones", "paella", "fideuà", "crema de verduras", "puré listo", "fruta cortada", "fruta pelada", "macedonia", "vaso de fruta", "humus", "hummus", "guacamole", "tzatziki", "mutabal", "salsa casera", "dip", "bocadillo", "sándwich", "wrap", "poke", "sushi", "albóndigas en salsa", "callos", "fabada"],
+    "Ingrediente": ["tomate", "pechuga", "pollo", "queso", "huevos", "carne", "fresco", "lomo", "fruta", "verdura", "manzana", "plátano", "naranja", "fresa", "aguacate", "patata", "cebolla", "ajo", "calabacín", "zanahoria", "lechuga", "espinacas", "filete", "solomillo", "entrecot", "carne picada", "hamburguesa cruda", "chorizo", "jamón", "fuet", "embutido", "pescado", "salmón", "merluza", "bacalao", "leche", "yogur", "mantequilla", "nata", "pan", "barra", "hogaza"],
+    "Suplemento": ["proteína", "whey", "colágeno", "vitamina", "multivitamínico", "cápsula", "herbolario", "jalea", "própolis", "propóleo", "creatina", "magnesio", "hierro", "zinc", "omega", "probiótico", "prebiótico", "infusión", "extracto", "comprimidos", "pastillas", "gotas", "jarabe", "isotónico", "electrolitos", "barrita energética", "barrita proteica", "espirulina", "matcha", "maca", "melatonina", "fibra"],
+    "Alacena": ["arroz", "aceite", "legumbres", "café", "té", "cacao", "bote", "tarro", "brick", "conserva", "lata", "paquete", "bolsa", "pasta", "macarrones", "espaguetis", "harina", "azúcar", "sal", "vinagre", "miel", "mermelada", "crema de cacahuete", "atún", "sardinas", "mejillones", "garbanzos", "lentejas", "alubias", "especias", "orégano", "pimentón", "caldo", "salsa", "ketchup", "mayonesa", "tomate frito", "galletas", "cereales", "avena", "frutos secos", "nueces", "almendras"]
   },
   "plan_semanal": {
-    "salud": ["bio", "ecológico", "integral", "sin gluten", "campo", "corral", "natural"],
-    "comodidad": ["listo", "preparado", "tortilla", "lasaña", "gazpacho"],
-    "ahorro": ["granel", "familiar", "oferta", "legumbres", "arroz", "brick"]
+    "salud": ["bio", "ecológico", "eco", "integral", "sin lactosa", "sin azúcar", "sin sal", "campo", "corral", "natural", "artesano", "fresco", "0%", "light", "vegano", "vegetariano", "proximidad", "km 0"],
+    "comodidad": ["listo", "preparado", "tortilla", "lasaña", "gazpacho", "salmorejo", "microondas", "cortada", "pelado", "troceado", "envasado", "ración", "individual", "tarrina", "bandeja"],
+    "ahorro": ["granel", "familiar", "oferta", "pack", "2x1", "legumbres", "arroz", "pasta", "brick", "lata", "conserva", "kg", "saco", "básico", "segunda unidad"],
+    "sin_gluten": ["sin gluten", "libre de gluten", "gluten free", "celíaco", "celíaca", "celiac", "glutenfree"],
+    "sin_lactosa": ["sin lactosa", "lactose free", "deslactosada", "deslactosado"]
   }
 }

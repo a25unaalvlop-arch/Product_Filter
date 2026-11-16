@@ -3,22 +3,26 @@ const path = require('path');
 const keywords = require('../data/keywords.json');
 const rutaProducts = path.join(__dirname, '../data/products.json');
 
+function limpiarTexto(texto) {
+  return String(texto || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+}
 
 function clasificarProducto(producto) {
   const guardados = JSON.parse(fs.readFileSync(rutaProducts, 'utf-8'));
-  const existente = guardados.find(p => p.nombre.toLowerCase() === producto.nombre.toLowerCase());
+  const existente = guardados.find(p => limpiarTexto(p.nombre) === limpiarTexto(producto.nombre));
   if (existente) return existente;
 
-
-
-  const textoCompleto = `${producto.nombre} ${producto.unidad || ''} ${producto.categoria || ''} ${producto.variedad || ''}`.toLowerCase();
+  const textoCompleto = limpiarTexto(`${producto.nombre} ${producto.unidad || ''} ${producto.categoria || ''} ${producto.variedad || ''}`);
   const tiposDetectados = [];
   const palabrasEncontradas = [];
 
-
   for (const [tipo, listaPalabras] of Object.entries(keywords.tipos)) {
     for (const palabra of listaPalabras) {
-      if (textoCompleto.includes(palabra)) {
+      if (textoCompleto.includes(limpiarTexto(palabra))) {
         if (!tiposDetectados.includes(tipo)) {
           tiposDetectados.push(tipo);
         }
@@ -26,8 +30,6 @@ function clasificarProducto(producto) {
       }
     }
   }
-
-
 
   if (tiposDetectados.length === 1) {
     return {
@@ -37,29 +39,45 @@ function clasificarProducto(producto) {
       motivo: "Coincide con alguna palabra clave de 1 solo tipo",
       plan_semanal: ClasificarPlan(producto)
     };
-  } else if (tiposDetectados.length > 1) {
-    return {
-      ...producto,
-      tipo: 'pendiente de revisión',
-      confianza: 0.5,
-      motivo: "Contiene palabras clave de más de 1 tipo",
-      plan_semanal: ClasificarPlan(producto)
-    };
-  } else {
-    return {
-      ...producto,
-      tipo: 'pendiente de revisión',
-      confianza: 0.0,
-      motivo: 'Ninguna palabra coincide',
-      plan_semanal: ClasificarPlan(producto)
-    };
-  }
+    } 
+    else {
+        
+        const resultadoIA = consultarIAFallback(producto, tiposDetectados); //Logica para peticiones de AI
+        if (resultadoIA && resultadoIA.confianza >= 0.75) {
+            return {
+                ...producto,
+                tipo: resultadoIA.tipo,
+                confianza: resultadoIA.confianza,
+                motivo: `Resuelto por IA: ${resultadoIA.razon}`,
+                plan_semanal: ClasificarPlan(producto)
+            };
+            
+                                                                            ///////////////////////////////
+        }else{
+            if (tiposDetectados.length > 1) {
+                return {
+                    ...producto,
+                    tipo: 'pendiente de revisión',
+                    confianza: 0.5,
+                    motivo: "Contiene palabras clave de más de 1 tipo",
+                    plan_semanal: ClasificarPlan(producto)
+                };
+            } else {
+                return {
+                    ...producto,
+                    tipo: 'pendiente de revisión',
+                    confianza: 0.0,
+                    motivo: 'Ninguna palabra coincide',
+                    plan_semanal: ClasificarPlan(producto)
+                };
+            }
+        }
+    }
 }
-
 
 function guardarCorreccion(nombre, nuevoTipo) {
   const guardados = JSON.parse(fs.readFileSync(rutaProducts, 'utf-8'));
-  let producto = guardados.find(p => p.nombre.toLowerCase() === nombre.toLowerCase());
+  let producto = guardados.find(p => limpiarTexto(p.nombre) === limpiarTexto(nombre));
 
   if (producto) {
     producto.tipo = nuevoTipo;
@@ -79,14 +97,20 @@ function guardarCorreccion(nombre, nuevoTipo) {
   return producto;
 }
 
+function consultarIAFallback(producto, candidatos) {
+    //Logica para peticiones de AI
 
+    
+  if (!process.env.AI_API_KEY) return null;
+  return null;
+}
 
 function ClasificarPlan(producto) {
-  const texto = `${producto.nombre} ${producto.variedad || ''}`.toLowerCase();
+  const texto = limpiarTexto(`${producto.nombre} ${producto.variedad || ''}`);
   const planes = [];
 
   for (const [tipo, palabras] of Object.entries(keywords.plan_semanal)) {
-    if (palabras.some(p => texto.includes(p))) {
+    if (palabras.some(p => texto.includes(limpiarTexto(p)))) {
       planes.push(tipo);
     }
   }
@@ -98,4 +122,4 @@ function ClasificarPlan(producto) {
   }
 }
 
-module.exports = { clasificarProducto, guardarCorreccion };
+module.exports = { clasificarProducto, guardarCorreccion, limpiarTexto };
