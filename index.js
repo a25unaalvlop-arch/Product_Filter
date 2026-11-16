@@ -24,6 +24,17 @@ app.post('/productos/clasificar', (req, res) => {
   res.json({ resultados });
 });
 
+app.put('/productos/corregir', (req, res) => {
+  const { nombre, tipo } = req.body;
+  const actualizado = guardarCorreccion(nombre, tipo);
+
+  if (!actualizado) {
+    return res.status(404).json({ error: 'Este producto no existe' });
+  }
+
+  res.json({ mensaje: 'Producto actualizado', producto: actualizado });
+});
+
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });

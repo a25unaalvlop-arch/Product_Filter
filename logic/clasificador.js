@@ -59,14 +59,22 @@ function clasificarProducto(producto) {
 
 function guardarCorreccion(nombre, nuevoTipo) {
   const guardados = JSON.parse(fs.readFileSync(rutaProducts, 'utf-8'));
-  const producto = guardados.find(p => p.nombre.toLowerCase() === nombre.toLowerCase());
+  let producto = guardados.find(p => p.nombre.toLowerCase() === nombre.toLowerCase());
 
-  if (!producto) return null;
-
-  producto.tipo = nuevoTipo;
-  producto.confianza = 1.0;
-  producto.motivo = 'Editado manualmente';
-
+  if (producto) {
+    producto.tipo = nuevoTipo;
+    producto.confianza = 1.0;
+    producto.motivo = 'Editado';
+  } else {
+    producto = {
+      nombre,
+      tipo: nuevoTipo,
+      confianza: 1.0,
+      motivo: 'Editado',
+      plan_semanal: ClasificarPlan({ nombre })
+    };
+    guardados.push(producto);
+  }
   fs.writeFileSync(rutaProducts, JSON.stringify(guardados, null, 2));
   return producto;
 }
