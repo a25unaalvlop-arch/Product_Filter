@@ -1,0 +1,13 @@
+{
+  "tipos": {
+    "Preparado": ["tortilla", "lasaña", "ensalada lista", "gazpacho", "asado", "cocinado"],
+    "Ingrediente": ["tomate", "pechuga", "pollo", "queso", "huevos", "carne", "fresco", "lomo"],
+    "Suplemento": ["proteína", "colágeno", "vitamina", "cápsula", "herbolario", "jalea"],
+    "Alacena": ["arroz", "aceite", "legumbres", "café", "bote", "tarro", "brick", "conserva", "lata"]
+  },
+  "plan_semanal": {
+    "salud": ["bio", "ecológico", "integral", "sin gluten", "campo", "corral", "natural"],
+    "comodidad": ["listo", "preparado", "tortilla", "lasaña", "gazpacho"],
+    "ahorro": ["granel", "familiar", "oferta", "legumbres", "arroz", "brick"]
+  }
+}
